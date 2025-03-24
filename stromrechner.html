@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pandarious Stromrechner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3e5f5;
+            color: #311b92;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+        }
+
+        #calculator-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            text-align: left;
+            width: 90%;
+            max-width: 1200px; /* Erweitert auf bis zu 1200px */
+            transition: box-shadow 0.3s ease;
+        }
+
+        h1 {
+            color: #9c27b0;
+            margin-bottom: 25px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        #device-list {
+            margin-bottom: 20px;
+            padding: 0;
+            list-style: none;
+            display: flex; /* Flexbox für horizontale Anordnung */
+            overflow-x: auto; /* Horizontale Scrollbar, falls nötig */
+            gap: 15px; /* Abstand zwischen den Geräte-Spalten */
+        }
+
+        #device-list li {
+            background-color: #f8f0fb;
+            margin-bottom: 0; /* Entferne unteren Rand, da Spalten nebeneinander sind */
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column; /* Inhalt der Spalte ist vertikal angeordnet */
+            align-items: flex-start;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
+            min-width: 250px; /* Mindestbreite für jede Spalte */
+            flex: 1; /* Gleichmäßige Breite der Spalten */
+        }
+
+        #device-list li:hover {
+            background-color: #f0ebf4;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #device-list li span {
+            font-weight: 500;
+            color: #7e57c2;
+            margin-right: 10px;
+            margin-bottom: 5px; /* Abstand für jedes Element in der Spalte */
+            display: block; /* Sorgt dafür, dass jedes Element eine neue Zeile beginnt */
+        }
+
+        #device-list li input[type="number"] {
+            padding: 10px;
+            border: 1px solid #d1c4e9;
+            border-radius: 5px;
+            margin: 0 0 10px 0; /* Oben/Unten Abstand, kein Seitenabstand*/
+            width: calc(100% - 20px);
+            transition: border-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        #device-list li input[type="number"]:focus {
+            border-color: #9c27b0;
+            outline: none;
+        }
+
+        #device-list li .delete-btn {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 10px; /* Abstand zum letzten Input-Feld */
+        }
+
+        #device-list li .delete-btn:hover {
+            background-color: #c2185b;
+            transform: scale(1.05);
+        }
+
+        #add-device-form {
+            background-color: #f8f0fb;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: background-color 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        #add-device-form h2 {
+            color: #9c27b0;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        #add-device-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #7e57c2;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 14px;
+        }
+
+        #add-device-form input[type="text"],
+        #add-device-form input[type="number"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #d1c4e9;
+            border-radius: 5px;
+            width: calc(100% - 20px);
+            max-width: 300px;
+            transition: border-color 0.3s ease;
+            font-size: 14px;
+        }
+
+        #add-device-form input[type="text"]:focus,
+        #add-device-form input[type="number"]:focus {
+            border-color: #9c27b0;
+            outline: none;
+        }
+
+        #add-device-form button {
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-size: 16px;
+            align-self: center;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        #add-device-form button:hover {
+            background-color: #7b1fa2;
+            transform: scale(1.03);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #total-consumption {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f0fb;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #total-consumption:hover {
+            background-color: #f0ebf4;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #total-consumption h3 {
+            color: #9c27b0;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+            font-size: 20px;
+        }
+
+        #total-consumption p {
+            font-size: 18px;
+            color: #512da8;
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            #calculator-container {
+                width: 95%;
+                padding: 20px;
+            }
+            #device-list {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            #device-list li {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+                min-width: auto;
+            }
+            #device-list li span {
+                margin-bottom: 10px;
+            }
+            #device-list li input[type="number"] {
+                margin: 10px 0;
+                width: calc(100% - 20px);
+                max-width: 300px;
+            }
+            #add-device-form {
+                padding: 15px;
+            }
+            #add-device-form input[type="text"],
+            #add-device-form input[type="number"] {
+                margin-bottom: 10px;
+                width: calc(100% - 20px);
+                max-width: 300px;
+            }
+            #add-device-form button {
+                align-self: stretch;
+            }
+            #total-consumption {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="calculator-container">
+        <h1>Pandarious Stromrechner</h1>
+
+        <ul id="device-list">
+            </ul>
+
+        <form id="add-device-form">
+            <h2>Gerät hinzufügen</h2>
+            <label for="device-name">Gerätename:</label>
+            <input type="text" id="device-name" placeholder="z.B. Kühlschrank" required>
+
+            <label for="wattage">Leistung (Watt):</label>
+            <input type="number" id="wattage" placeholder="z.B. 150" required min="0">
+
+            <label for="hours-used">Stunden pro Tag:</label>
+            <input type="number" id="hours-used" placeholder="z.B. 24" required min="0" max="24">
+
+             <label for="kwh-price">Preis pro kWh (Cent):</label>
+            <input type="number" id="kwh-price" placeholder="z.B. 30" required min="0">
+
+            <button type="submit">Gerät hinzufügen</button>
+        </form>
+
+        <div id="total-consumption">
+            <h3>Gesamter Stromverbrauch</h3>
+            <p>0 € pro Tag</p>
+            <p>0 € pro Woche</p>
+            <p>0 € pro Monat</p>
+        </div>
+    </div>
+
+    <script>
+        const deviceList = document.getElementById('device-list');
+        const addDeviceForm = document.getElementById('add-device-form');
+        const totalConsumptionDisplay = document.getElementById('total-consumption').querySelectorAll('p');
+        const deviceNameInput = document.getElementById('device-name');
+        const wattageInput = document.getElementById('wattage');
+        const hoursUsedInput = document.getElementById('hours-used');
+        const kwhPriceInput = document.getElementById('kwh-price');
+        const MAX_DEVICES = 5;
+
+        let devices = [];
+
+        if (localStorage.getItem('devices')) {
+            devices = JSON.parse(localStorage.getItem('devices'));
+        }
+
+        function calculateDailyConsumption(wattage, hoursUsed, kwhPrice) {
+            const kwh = (wattage / 1000) * hoursUsed;
+            const dailyCost = kwh * (kwhPrice / 100);
+            return dailyCost.toFixed(2);
+        }
+
+        function displayDevices() {
+            deviceList.innerHTML = '';
+            let totalDailyCost = 0;
+
+            devices.forEach((device, index) => {
+                const dailyCost = calculateDailyConsumption(device.wattage, device.hoursUsed, device.kwhPrice);
+                totalDailyCost += parseFloat(dailyCost);
+
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span>Gerätename:</span>
+                    <input type="text" value="${device.name}" data-device-index="${index}" data-field="name" placeholder="z.B. Kühlschrank">
+                    <span>Leistung (Watt):</span>
+                    <input type="number" value="${device.wattage}" data-device-index="${index}" data-field="wattage" placeholder="z.B. 150" min="0">
+                    <span>Stunden pro Tag:</span>
+                    <input type="number" value="${device.hoursUsed}" data-device-index="${index}" data-field="hoursUsed" placeholder="z.B. 24" min="0" max="24">
+                    <span>Preis pro kWh (Cent):</span>
+                    <input type="number" value="${device.kwhPrice}" data-device-index="${index}" data-field="kwhPrice" placeholder="z.B. 30" required min="0">
+                    <span>Kosten pro Tag: ${dailyCost} €</span>
+                    <button class="delete-btn" data-index="${index}">Löschen</button>
+                `;
+                deviceList.appendChild(listItem);
+            });
+
+            const weeklyCost = (totalDailyCost * 7).toFixed(2);
+            const monthlyCost = (totalDailyCost * 30).toFixed(2);
+
+            totalConsumptionDisplay[0].textContent = `${totalDailyCost.toFixed(2)} € pro Tag`;
+            totalConsumptionDisplay[1].textContent = `${weeklyCost} € pro Woche`;
+            totalConsumptionDisplay[2].textContent = `${monthlyCost} € pro Monat`;
+
+            localStorage.setItem('devices', JSON.stringify(devices));
+            updateAddDeviceFormState();
+        }
+
+        function updateAddDeviceFormState() {
+            if (devices.length >= MAX_DEVICES) {
+                addDeviceForm.style.display = 'none';
+            } else {
+                addDeviceForm.style.display = 'flex';
+            }
+        }
+
+
+        addDeviceForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const name = deviceNameInput.value.trim();
+            const wattage = parseFloat(wattageInput.value);
+            const hoursUsed = parseFloat(hoursUsedInput.value);
+            const kwhPrice = parseFloat(kwhPriceInput.value);
+
+            if (name && !isNaN(wattage) && !isNaN(hoursUsed) && !isNaN(kwhPrice)) {
+                devices.push({ name, wattage, hoursUsed, kwhPrice });
+                displayDevices();
+                addDeviceForm.reset();
+            } else {
+                alert('Bitte füllen Sie alle Felder korrekt aus.');
+            }
+        });
+
+        deviceList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('delete-btn')) {
+                const index = event.target.dataset.index;
+                devices.splice(index, 1);
+                displayDevices();
+            }
+        });
+
+        deviceList.addEventListener('change', (event) => {
+            const target = event.target;
+            if (target.dataset.deviceIndex && target.dataset.field) {
+                const deviceIndex = parseInt(target.dataset.deviceIndex);
+                const field = target.dataset.field;
+                const value = target.value.trim();
+
+                if (field === 'name') {
+                    devices[deviceIndex].name = value;
+                } else if (field === 'wattage') {
+                    devices[deviceIndex].wattage = parseFloat(value);
+                } else if (field === 'hoursUsed') {
+                    devices[deviceIndex].hoursUsed = parseFloat(value);
+                }  else if (field === 'kwhPrice') {
+                    devices[deviceIndex].kwhPrice = parseFloat(value);
+                }
+
+                displayDevices(); // Aktualisiere die Anzeige, um die Änderungen widerzuspiegeln
+            }
+        });
+
+        displayDevices();
+    </script>
+</body>
+</html>
